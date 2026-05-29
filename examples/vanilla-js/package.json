@@ -16,7 +16,7 @@
     "eslint": "^9.30.0",
     "globals": "^15.15.0",
     "jsdom": "^26.0.0",
-    "typescript": "^5.8.0",
+    "typescript": "^6.0.3",
     "vitest": "^3.0.0"
   }
 }
