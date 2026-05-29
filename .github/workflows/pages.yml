@@ -60,7 +60,7 @@ jobs:
         run: node .github/scripts/landing.mjs
 
       - name: Configure Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v6
         with:
           # Auto-enable Pages on the first run if the repo doesn't have it
           # configured yet. Requires `pages: write` (already granted above).
