@@ -1,0 +1,22 @@
+{
+  "name": "@analytics-embedding-examples/vanilla-js",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Vanilla JS / ES modules example for @salesforce/analytics-embedding-sdk — no build step.",
+  "scripts": {
+    "dev": "npx serve . -l 5174",
+    "lint": "eslint \"{js,test}/**/*.{js,mjs}\" --report-unused-disable-directives --max-warnings 0",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.30.0",
+    "@salesforce/analytics-embedding-sdk": "^1",
+    "eslint": "^9.30.0",
+    "globals": "^15.15.0",
+    "jsdom": "^26.0.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.0.0"
+  }
+}

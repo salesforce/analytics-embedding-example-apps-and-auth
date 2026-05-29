@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.angular/
+.vite/
+.parcel-cache/
+*.tsbuildinfo
+
+# Test outputs
+coverage/
+.nyc_output/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log
+*.swp
+
+# Env files (never commit credentials)
+.env
+.env.local
+.env.*.local
+
+# Cache
+.npm/
+.eslintcache
+
+# Local-only experiments
+tmp/
+scratch/

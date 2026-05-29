@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Vanilla JS / ES modules example for @salesforce/analytics-embedding-sdk — embed Tableau Next analytics with no build step."
+    />
+    <!--
+      CSP for the Vanilla example. The SDK loads from jsdelivr; embedded
+      analytics call back to your Salesforce org and Tableau Next service
+      origins. Tighten this for production deployments.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self';
+               script-src 'self' https://cdn.jsdelivr.net;
+               style-src 'self' 'unsafe-inline';
+               img-src 'self' data: https:;
+               connect-src 'self' https://*.lightning.force.com https://*.salesforce.com https://*.my.salesforce.com https://*.tableau.com;
+               frame-src https://*.lightning.force.com https://*.salesforce.com https://*.tableau.com;
+               base-uri 'self';"
+    />
+    <title>Configure — Analytics Embedding SDK (Vanilla example)</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <!--
+      The SDK isn't loaded on this setup page — preload directives live on
+      showcase.html and agent.html where the import actually fires.
+    -->
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <main id="main" class="config-gate">
+      <header>
+        <h1>Configure the demo</h1>
+        <p>
+          This example needs a Salesforce org URL and a frontdoor URL to
+          establish a session.
+          <a
+            href="https://github.com/salesforce/analytics-embedding-example-apps-and-auth/blob/main/docs/how-to-get-frontdoor-url.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            >How do I get these?</a
+          >
+        </p>
+      </header>
+
+      <p id="storage-warning" class="warning" role="status" hidden></p>
+
+      <form id="config-form" novalidate>
+        <div class="field">
+          <label for="orgUrl">Org URL (Lightning)</label>
+          <input
+            id="orgUrl"
+            name="orgUrl"
+            type="url"
+            placeholder="https://yourorg.lightning.force.com"
+            autocomplete="off"
+            spellcheck="false"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label for="authCredential">Frontdoor URL (auth credential)</label>
+          <textarea
+            id="authCredential"
+            name="authCredential"
+            rows="4"
+            placeholder="https://yourorg.lightning.force.com/secur/frontdoor.jsp?sid=..."
+            autocomplete="off"
+            spellcheck="false"
+            required
+          ></textarea>
+        </div>
+
+        <p id="form-error" class="error" role="alert" hidden></p>
+
+        <p class="hint">
+          <strong>Demo only.</strong> Do not paste production credentials. The
+          frontdoor URL grants session access — treat it like a password and
+          use a sandbox org.
+        </p>
+
+        <button type="submit" class="btn btn--primary">Save and connect</button>
+      </form>
+    </main>
+    <script type="module" src="./js/setup-page.js"></script>
+  </body>
+</html>

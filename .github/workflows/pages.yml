@@ -1,0 +1,83 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build react-vite
+        working-directory: examples/react-vite
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+
+      - name: Build angular
+        working-directory: examples/angular
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+
+      - name: Stage dist/
+        run: |
+          mkdir -p dist
+          cp -r examples/react-vite/dist dist/react-vite
+          cp -r examples/vanilla-js dist/vanilla-js
+          # Drop devtime files from the vanilla copy.
+          rm -rf dist/vanilla-js/node_modules dist/vanilla-js/test \
+                 dist/vanilla-js/package.json dist/vanilla-js/package-lock.json \
+                 dist/vanilla-js/eslint.config.js dist/vanilla-js/tsconfig.json \
+                 dist/vanilla-js/vitest.config.js
+          # Angular's CLI builds into examples/angular/dist or .../dist/browser
+          # depending on builder; copy whichever exists.
+          if [ -d examples/angular/dist/browser ]; then
+            cp -r examples/angular/dist/browser dist/angular
+          else
+            cp -r examples/angular/dist dist/angular
+          fi
+
+      - name: Generate landing page
+        run: node .github/scripts/landing.mjs
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v4
+        with:
+          # Auto-enable Pages on the first run if the repo doesn't have it
+          # configured yet. Requires `pages: write` (already granted above).
+          enablement: true
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
