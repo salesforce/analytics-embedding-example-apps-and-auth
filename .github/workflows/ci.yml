@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  example:
+    name: ${{ matrix.example }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - example: react-vite
+            dir: examples/react-vite
+            build: true
+          - example: vanilla-js
+            dir: examples/vanilla-js
+            build: false
+          - example: angular
+            dir: examples/angular
+            build: true
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.dir }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node 22 LTS
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        if: ${{ matrix.build }}
+        run: npm run build

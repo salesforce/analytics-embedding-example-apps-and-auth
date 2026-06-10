@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="AnalyticsAgent embed — Agentforce analytics agent mounted via @salesforce/analytics-embedding-sdk custom element."
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self';
+               script-src 'self' https://cdn.jsdelivr.net;
+               style-src 'self' 'unsafe-inline';
+               img-src 'self' data: https:;
+               connect-src 'self' https://*.force.com https://*.salesforce.com https://*.tableau.com;
+               frame-src https://*.force.com https://*.salesforce.com https://*.tableau.com;
+               base-uri 'self';"
+    />
+    <title>Agent — Analytics Embedding SDK (Vanilla example)</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link
+      rel="modulepreload"
+      href="https://cdn.jsdelivr.net/npm/@salesforce/analytics-embedding-sdk@1/dist/sdk-bundle.module.js"
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div id="app-header"></div>
+    <main id="main" class="app">
+      <header class="page-header">
+        <h1>AnalyticsAgent</h1>
+        <p>
+          The Agentforce analytics agent on its own page. Custom elements
+          upgrade after the SDK module loads.
+        </p>
+      </header>
+
+      <p id="status" class="loading"></p>
+      <div id="error-host"></div>
+
+      <analytics-agent
+        id="agent"
+        id-or-api-name="YourAnalyticsAgentApiName"
+        show-header="true"
+        show-header-actions="true"
+        role="region"
+        aria-label="Analytics agent"
+        aria-busy="true"
+        class="embed embed--agent"
+      ></analytics-agent>
+    </main>
+    <script type="module" src="./js/agent-page.js"></script>
+  </body>
+</html>

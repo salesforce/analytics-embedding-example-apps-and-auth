@@ -1,0 +1,36 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/examples/react-vite"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      dev-deps:
+        dependency-type: development
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: "/examples/vanilla-js"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      dev-deps:
+        dependency-type: development
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: "/examples/angular"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      dev-deps:
+        dependency-type: development
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
