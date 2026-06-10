@@ -9,25 +9,26 @@ import {
 } from './lib/config';
 import { messages } from './lib/messages';
 
-interface ConfigGateProps {
+interface SetupProps {
   onConfig: (config: DemoConfig) => void;
 }
 
 /**
- * Renders the in-app config form when localStorage is empty, OR forwards an
+ * Renders the in-app setup form when localStorage is empty, OR forwards an
  * already-saved config to its parent. Replaces the need for a `.env` file
  * and lets visitors test-drive the demo without a backend.
  */
-export function ConfigGate({ onConfig }: ConfigGateProps): React.ReactElement {
+export function Setup({ onConfig }: SetupProps): React.ReactElement {
   const orgUrlId = useId();
   const authId = useId();
   const [orgUrl, setOrgUrl] = useState('');
   const [authCredential, setAuthCredential] = useState('');
   const [error, setError] = useState<ValidationError | null>(null);
-  const [storageOk, setStorageOk] = useState(true);
+  // Lazy initializer — runs once on mount; avoids the
+  // `react-hooks/set-state-in-effect` antipattern.
+  const [storageOk] = useState(() => isStorageAvailable());
 
   useEffect(() => {
-    setStorageOk(isStorageAvailable());
     const existing = loadConfig();
     if (existing) onConfig(existing);
   }, [onConfig]);
@@ -48,7 +49,7 @@ export function ConfigGate({ onConfig }: ConfigGateProps): React.ReactElement {
   };
 
   return (
-    <main id="main" className="config-gate">
+    <main id="main" className="setup">
       <title>Configure — Analytics Embedding SDK example</title>
       <header>
         <h1>Configure the demo</h1>

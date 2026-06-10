@@ -52,12 +52,12 @@ a:hover { color: var(--c-accent-hover); }
 .btn--primary:hover:not([disabled]) { background: var(--c-accent-hover); color: #fff; }
 .btn--ghost { background: transparent; }
 
-.config-gate {
+.setup {
   max-width: 640px; margin: 4rem auto; padding: 2rem;
   background: var(--c-surface); border: 1px solid var(--c-border);
   border-radius: var(--radius);
 }
-.config-gate header h1 { margin-top: 0; }
+.setup header h1 { margin-top: 0; }
 
 .field { display: flex; flex-direction: column; margin: 1rem 0; }
 .field label { font-weight: 600; margin-bottom: 0.25rem; }

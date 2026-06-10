@@ -10,7 +10,7 @@ import {
 } from 'react';
 import { createHashRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { Status } from '@salesforce/analytics-embedding-sdk';
-import { ConfigGate } from './ConfigGate';
+import { Setup } from './Setup';
 import { ErrorPanel } from './ErrorPanel';
 import { AppHeader } from './AppHeader';
 import { Showcase } from './routes/Showcase';
@@ -75,7 +75,7 @@ function Shell(): React.ReactElement {
 }
 
 // Router is created **once** at module load so RouterProvider sees a stable
-// instance. createHashRouter avoids the GitHub Pages deep-link 404 problem
+// instance. createHashRouter avoids the static-host deep-link 404 problem
 // without needing server-side rewrites.
 const router = createHashRouter([
   {
@@ -106,6 +106,10 @@ export function App(): React.ReactElement {
   const [state, setState] = useState<InitState>({ kind: 'idle' });
 
   const handleConfig = useCallback((next: DemoConfig) => {
+    // Flip into 'initializing' alongside the config update so the effect
+    // below doesn't need to setState on entry (avoids the
+    // react-hooks/set-state-in-effect lint rule).
+    setState({ kind: 'initializing' });
     setConfig(next);
   }, []);
 
@@ -142,7 +146,6 @@ export function App(): React.ReactElement {
 
   useEffect(() => {
     if (!config) return;
-    setState({ kind: 'initializing' });
     initSdkOnce(config)
       .then((response) => {
         if (response.status === Status.SUCCESS) {
@@ -187,7 +190,7 @@ export function App(): React.ReactElement {
   );
 
   if (!config) {
-    return <ConfigGate onConfig={handleConfig} />;
+    return <Setup onConfig={handleConfig} />;
   }
 
   return (

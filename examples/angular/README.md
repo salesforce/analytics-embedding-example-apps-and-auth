@@ -1,7 +1,7 @@
-# Angular 17 — Analytics Embedding SDK example
+# Angular 21 — Analytics Embedding SDK example
 
-A runnable example of `@salesforce/analytics-embedding-sdk` using Angular 17
-standalone components, signals, and the new control-flow syntax.
+A runnable example of `@salesforce/analytics-embedding-sdk` using Angular 21
+standalone components, signals, and the `@if`/`@for` control-flow syntax.
 
 ## Run locally
 
@@ -24,9 +24,9 @@ npm run build      # outputs dist/ with --base-href ./
 ```
 
 The build uses `--base-href ./` so the bundle is portable to any sub-path
-(GitHub Pages `/angular/`, root `/`, custom prefix). Combined with hash
-location strategy (`withHashLocation()` in `app.config.ts`), the deploy
-needs no server-side rewrite rules.
+(root `/`, `/angular/`, custom prefix). Combined with hash location
+strategy (`withHashLocation()` in `app.config.ts`), the deploy needs no
+server-side rewrite rules.
 
 ## Scripts
 
@@ -41,16 +41,16 @@ needs no server-side rewrite rules.
 ## What this example teaches
 
 - How to gate routes with a **functional `canActivate` guard** that reads
-  signal-backed state from a service (`ConfigGuard` → `ConfigService`).
+  signal-backed state from a service (`configGuard` → `ConfigService`).
 - How to integrate the SDK's class API with Angular's `ngAfterViewInit` /
-  `ngOnDestroy` lifecycle (mount via `@ViewChild` element ref, dispose on
+  `ngOnDestroy` lifecycle (mount via `@ViewChild` element ref, `.remove()` on
   destroy).
 - How to use **signals** for the init state machine — read in templates
   with `state()` and bound conditionals via `@if`.
 - How to lazy-load a route with `loadComponent` (analogous to
   `React.lazy`).
-- How to make an Angular SPA deploy cleanly to GitHub Pages without server
-  rewrites (hash location + `--base-href ./`).
+- How to make an Angular SPA deploy cleanly to any sub-path without
+  server rewrites (hash location + `--base-href ./`).
 
 ## Files of interest
 

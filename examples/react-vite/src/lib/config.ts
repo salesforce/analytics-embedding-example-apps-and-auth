@@ -32,7 +32,7 @@ export function validateConfig(input: {
 /**
  * Returns a usable config or `null` if either key is missing/blank.
  * Never throws — `localStorage` access can fail in private mode and we want
- * the caller to render the ConfigGate cleanly in that case.
+ * the caller to render the Setup form cleanly in that case.
  */
 export function loadConfig(): DemoConfig | null {
   try {

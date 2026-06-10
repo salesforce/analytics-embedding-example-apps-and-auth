@@ -2,7 +2,7 @@
 
 > Canonical, framework-spanning example apps that demonstrate
 > `@salesforce/analytics-embedding-sdk` (Tableau Next embedded analytics) in
-> React 19, Vanilla JS, and Angular 17. Each example covers Dashboard, Metric,
+> React 19, Vanilla JS, and Angular 21. Each example covers Dashboard, Metric,
 > Visualization, AnalyticsAgent, filter interaction, and recoverable error UX.
 
 ## SDK
@@ -11,9 +11,9 @@
 - Source examples in this repo: `examples/`
 
 ## Examples
-- `examples/react-vite/` — React 19 + Vite 6 + TypeScript strict; class API; `react-router-dom` v7
+- `examples/react-vite/` — React 19 + Vite 8 + TypeScript strict; class API; `react-router-dom` v7
 - `examples/vanilla-js/` — Plain HTML + ES modules, no build; HTML custom-element API; CDN-loaded SDK
-- `examples/angular/` — Angular 17 standalone components; signals; class API; `loadComponent` lazy routing
+- `examples/angular/` — Angular 21 standalone components; signals; class API; `loadComponent` lazy routing
 
 ## Auth
 - Phase 1 (this repo today): user pastes a Salesforce **frontdoor URL** into an in-app config form. Stored in `localStorage`. Demo only — sandbox orgs only.
@@ -22,7 +22,7 @@
 
 ## Key SDK API surface demonstrated
 - `initializeAnalyticsSdk(config)` — bootstraps a session against an org
-- `Status.Success` / `Status.Failure` — init result discrimination
+- `Status.SUCCESS` / `Status.FAILURE` — init result discrimination
 - `OrgStates.AUTH_REDIRECT` — MFA / password-reset path
 - `retryOrAddOrgs` — retry after auth redirect
 - `AnalyticsDashboard` — embedded dashboard (class API and `<analytics-dashboard>` element)
@@ -31,7 +31,7 @@
 - `AnalyticsAgent` — Agentforce analytics agent
 - `applyFilters` — programmatic filter application
 - `EventName.ERROR` — runtime error subscription
-- `dispose()` — lifecycle cleanup
+- `.remove()` — lifecycle cleanup (each embed is an HTMLElement; detaching it disposes it)
 
 ## Cross-example consistency
 - localStorage keys: `analytics-sdk-demo:orgUrl`, `analytics-sdk-demo:authCredential`

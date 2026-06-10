@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ConfigGate } from '../src/ConfigGate';
+import { Setup } from '../src/Setup';
 import {
   STORAGE_KEYS,
   loadConfig,
@@ -10,9 +10,9 @@ import {
   validateConfig,
 } from '../src/lib/config';
 
-describe('ConfigGate', () => {
+describe('Setup', () => {
   it('renders the form when localStorage is empty', () => {
-    render(<ConfigGate onConfig={() => {}} />);
+    render(<Setup onConfig={() => {}} />);
     expect(
       screen.getByRole('textbox', { name: /org url/i }),
     ).toBeInTheDocument();
@@ -23,7 +23,7 @@ describe('ConfigGate', () => {
 
   it('persists both keys to localStorage on save', async () => {
     const user = userEvent.setup();
-    render(<ConfigGate onConfig={() => {}} />);
+    render(<Setup onConfig={() => {}} />);
     await user.type(
       screen.getByRole('textbox', { name: /org url/i }),
       'https://acme.lightning.force.com',
@@ -45,7 +45,7 @@ describe('ConfigGate', () => {
   it('rejects non-Lightning org URLs', async () => {
     const user = userEvent.setup();
     let captured: unknown = null;
-    render(<ConfigGate onConfig={(c) => (captured = c)} />);
+    render(<Setup onConfig={(c) => (captured = c)} />);
     await user.type(
       screen.getByRole('textbox', { name: /org url/i }),
       'https://acme.my.salesforce.com',

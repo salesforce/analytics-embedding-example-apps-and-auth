@@ -51,7 +51,7 @@ SDK will use it to load embedded analytics assets.
 
 Frontdoor URLs inherit the lifetime of the underlying session. Sessions
 typically last **2 hours** of inactivity, configurable per org. When the SDK
-init returns `Status.Failure` with a session-related message, the URL has
+init returns `Status.FAILURE` with a session-related message, the URL has
 expired — generate a fresh one and click **Reset config** in the example app.
 
 If your org enforces multi-factor authentication and the session needs

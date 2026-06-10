@@ -9,7 +9,7 @@ import { messages } from '../messages';
   standalone: true,
   imports: [FormsModule],
   template: `
-    <main id="main" class="config-gate">
+    <main id="main" class="setup">
       <header>
         <h1>Configure the demo</h1>
         <p>

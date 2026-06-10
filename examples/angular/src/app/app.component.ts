@@ -13,7 +13,7 @@ import { ErrorPanelComponent } from './error-panel.component';
         <header class="app-header">
           <div class="app-header__brand">
             <strong>Analytics Embedding SDK</strong>
-            <span class="app-header__tag">Angular 17 example</span>
+            <span class="app-header__tag">Angular 21 example</span>
           </div>
           <nav aria-label="Primary">
             <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Showcase</a>
