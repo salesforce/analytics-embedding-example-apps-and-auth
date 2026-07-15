@@ -26,7 +26,7 @@ jobs:
           MARKER="<!-- dependabot-triage:v1 -->"
 
           prs=$(gh pr list --repo "$REPO" --author "app/dependabot" --state open \
-            --json number,title,statusCheckRollup)
+            --json number,title,headRefOid)
 
           count=$(echo "$prs" | jq 'length')
           echo "Found $count open Dependabot PR(s)."
@@ -35,10 +35,14 @@ jobs:
             pr=$(echo "$prs" | jq ".[$i]")
             number=$(echo "$pr" | jq -r '.number')
             title=$(echo "$pr" | jq -r '.title')
+            sha=$(echo "$pr" | jq -r '.headRefOid')
 
-            # CI status: blocked if any check failed, pending if any incomplete, else green.
-            has_failure=$(echo "$pr" | jq '[.statusCheckRollup[]? | select(.conclusion == "FAILURE")] | length > 0')
-            has_pending=$(echo "$pr" | jq '[.statusCheckRollup[]? | select(.status != "COMPLETED")] | length > 0')
+            # CI status via REST check-runs on the PR head commit (avoids the GraphQL
+            # statusCheckRollup.workflowRun field, which the default token can't read
+            # cross-workflow). Blocked if any run failed, pending if any incomplete, else green.
+            checks=$(gh api "repos/$REPO/commits/$sha/check-runs" --jq '.check_runs')
+            has_failure=$(echo "$checks" | jq '[.[] | select(.conclusion == "failure")] | length > 0')
+            has_pending=$(echo "$checks" | jq '[.[] | select(.status != "completed")] | length > 0')
 
             if [ "$has_failure" = "true" ]; then
               ci_line="CI: failing"
