@@ -1,0 +1,103 @@
+name: Dependabot Triage
+
+on:
+  schedule:
+    # 06:17 UTC daily — offset from the hour to avoid GitHub's cron-minute thundering herd.
+    - cron: "17 6 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Triage open Dependabot PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          MARKER="<!-- dependabot-triage:v1 -->"
+
+          prs=$(gh pr list --repo "$REPO" --author "app/dependabot" --state open \
+            --json number,title,statusCheckRollup)
+
+          count=$(echo "$prs" | jq 'length')
+          echo "Found $count open Dependabot PR(s)."
+
+          for i in $(seq 0 $((count - 1))); do
+            pr=$(echo "$prs" | jq ".[$i]")
+            number=$(echo "$pr" | jq -r '.number')
+            title=$(echo "$pr" | jq -r '.title')
+
+            # CI status: blocked if any check failed, pending if any incomplete, else green.
+            has_failure=$(echo "$pr" | jq '[.statusCheckRollup[]? | select(.conclusion == "FAILURE")] | length > 0')
+            has_pending=$(echo "$pr" | jq '[.statusCheckRollup[]? | select(.status != "COMPLETED")] | length > 0')
+
+            if [ "$has_failure" = "true" ]; then
+              ci_line="CI: failing"
+              risk_emoji="🔴"
+              risk_label="Blocked"
+              risk_note="CI is red. This needs a fix (or a maintainer look) before it can merge."
+            elif [ "$has_pending" = "true" ]; then
+              ci_line="CI: pending"
+              risk_emoji="🟡"
+              risk_label="Pending"
+              risk_note="CI is still running. Re-check once it completes."
+            else
+              ci_line="CI: green"
+
+              # Parse "from X.Y.Z to A.B.C" (semver) or "from N to M" (bare major, e.g. actions/*) to classify the bump.
+              if [[ "$title" =~ from\ ([0-9]+)\.([0-9]+)\.([0-9]+)\ to\ ([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
+                old_major="${BASH_REMATCH[1]}"; old_minor="${BASH_REMATCH[2]}"
+                new_major="${BASH_REMATCH[4]}"; new_minor="${BASH_REMATCH[5]}"
+                if [ "$old_major" != "$new_major" ]; then
+                  risk_emoji="🟠"
+                  risk_label="Higher risk — major bump"
+                  risk_note="Major version bump. Skim the changelog for breaking changes before merging."
+                elif [ "$old_minor" != "$new_minor" ]; then
+                  risk_emoji="🟡"
+                  risk_label="Moderate risk — minor bump"
+                  risk_note="Minor version bump, CI green. Worth a quick changelog skim before merging."
+                else
+                  risk_emoji="🟢"
+                  risk_label="Low risk — patch bump"
+                  risk_note="Patch-level bump, CI green. Safe to merge on the usual review."
+                fi
+              elif [[ "$title" =~ from\ ([0-9]+)\ to\ ([0-9]+) ]]; then
+                risk_emoji="🟠"
+                risk_label="Higher risk — major bump"
+                risk_note="Bare major-version bump (e.g. a GitHub Action tag). Skim the changelog/release notes before merging."
+              else
+                risk_emoji="🟡"
+                risk_label="Ungrouped or unparsed bump"
+                risk_note="Couldn't parse a single version bump from the title (likely a grouped update). CI is green — review the diff before merging."
+              fi
+            fi
+
+            body=$(cat <<EOF
+          $MARKER
+          ### Dependabot triage: $risk_emoji $risk_label
+
+          - $ci_line
+          - $risk_note
+
+          _Automated triage only — no action taken. A maintainer still decides whether to merge._
+          EOF
+          )
+
+            existing=$(gh api "repos/$REPO/issues/$number/comments" --paginate \
+              --jq "[.[] | select(.body | startswith(\"$MARKER\"))][0].id // empty")
+
+            if [ -n "$existing" ]; then
+              echo "PR #$number: updating existing triage comment ($existing) -> $risk_label"
+              gh api -X PATCH "repos/$REPO/issues/comments/$existing" -f body="$body" > /dev/null
+            else
+              echo "PR #$number: posting new triage comment -> $risk_label"
+              gh api "repos/$REPO/issues/$number/comments" -f body="$body" > /dev/null
+            fi
+          done
