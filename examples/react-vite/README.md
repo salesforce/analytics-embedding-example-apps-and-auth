@@ -6,14 +6,14 @@ React 19 + Vite 8 + TypeScript project.
 ## Run locally
 
 ```bash
-npm install
+npm ci
 npm run dev
 # Open http://localhost:8500
 ```
 
 The first time you open the app you'll see a config form. Paste your
 `https://yourorg.lightning.force.com` URL and a frontdoor URL, then click
-**Save and connect**.
+**Connect**. The credential remains in memory and is discarded on reload.
 
 > Need a frontdoor URL? See [`docs/how-to-get-frontdoor-url.md`](../../docs/how-to-get-frontdoor-url.md) at the repo root.
 
@@ -53,14 +53,14 @@ sub-path (root, `/react-vite/`, custom prefix) without rebuilding.
 | File | Why |
 |---|---|
 | [`src/App.tsx`](src/App.tsx) | Router + Setup orchestration; init-state machine |
-| [`src/Setup.tsx`](src/Setup.tsx) | In-app setup form, validation, localStorage |
+| [`src/Setup.tsx`](src/Setup.tsx) | In-app setup form and memory-only credential handoff |
 | [`src/ErrorPanel.tsx`](src/ErrorPanel.tsx) | Canonical error UI (Reset / Retry / Continue) |
 | [`src/routes/Showcase.tsx`](src/routes/Showcase.tsx) | Dashboard + Metric + Visualization |
 | [`src/routes/Agent.tsx`](src/routes/Agent.tsx) | AnalyticsAgent (lazy-loaded) |
-| [`src/lib/config.ts`](src/lib/config.ts) | `loadConfig`, `saveConfig`, `validateConfig` |
+| [`src/lib/config.ts`](src/lib/config.ts) | Config types and validation |
 | [`src/lib/initSdkOnce.ts`](src/lib/initSdkOnce.ts) | Singleton init guard for `initializeAnalyticsSdk` |
 | [`src/lib/messages.ts`](src/lib/messages.ts) | Canonical error copy |
-| [`test/smoke.test.tsx`](test/smoke.test.tsx) | 7-case smoke suite (SDK mocked) |
+| [`test/smoke.test.tsx`](test/smoke.test.tsx) | Setup and validation smoke tests (SDK mocked) |
 
 ## Notes
 
@@ -71,5 +71,8 @@ sub-path (root, `/react-vite/`, custom prefix) without rebuilding.
   work under any sub-path.
 - React 19 specific idioms in use: `useId()` for form IDs, native
   `<title>` in components (no `react-helmet`), and `ref` as a normal prop.
+- Replace the asset placeholders in `src/routes/Showcase.tsx` and
+  `src/routes/Agent.tsx` before connecting. Complete the repository's
+  [Salesforce prerequisites](../../docs/prerequisites.md) first.
 
 ← [Back to repo root](../../README.md)

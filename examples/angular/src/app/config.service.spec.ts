@@ -1,42 +1,37 @@
 import { TestBed } from '@angular/core/testing';
-import { ConfigService, STORAGE_KEYS } from './config.service';
+import { ConfigService } from './config.service';
 
 describe('ConfigService', () => {
   let service: ConfigService;
 
   beforeEach(() => {
-    localStorage.clear();
     TestBed.configureTestingModule({});
     service = TestBed.inject(ConfigService);
   });
 
-  it('config() returns null when localStorage is empty', () => {
+  it('config() starts empty', () => {
     expect(service.config()).toBeNull();
   });
 
-  it('save() persists both keys', () => {
+  it('save() holds a trimmed config in memory', () => {
     service.save({
-      orgUrl: 'https://acme.lightning.force.com',
-      authCredential: 'frontdoor',
+      orgUrl: '  https://acme.lightning.force.com  ',
+      authCredential: '  frontdoor  ',
     });
-    expect(localStorage.getItem(STORAGE_KEYS.orgUrl)).toBe(
-      'https://acme.lightning.force.com',
-    );
-    expect(localStorage.getItem(STORAGE_KEYS.authCredential)).toBe('frontdoor');
     expect(service.config()).toEqual({
       orgUrl: 'https://acme.lightning.force.com',
       authCredential: 'frontdoor',
     });
+    expect(localStorage.length).toBe(0);
   });
 
-  it('clear() removes both keys', () => {
+  it('clear() discards the in-memory config', () => {
     service.save({
       orgUrl: 'https://acme.lightning.force.com',
       authCredential: 'frontdoor',
     });
     service.clear();
     expect(service.config()).toBeNull();
-    expect(localStorage.getItem(STORAGE_KEYS.orgUrl)).toBeNull();
   });
 
   it('validate() rejects a malformed org URL', () => {

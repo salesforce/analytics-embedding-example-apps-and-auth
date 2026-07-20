@@ -1,8 +1,5 @@
-import { useEffect, useId, useState } from 'react';
+import { useId, useState } from 'react';
 import {
-  loadConfig,
-  saveConfig,
-  isStorageAvailable,
   validateConfig,
   type DemoConfig,
   type ValidationError,
@@ -14,9 +11,8 @@ interface SetupProps {
 }
 
 /**
- * Renders the in-app setup form when localStorage is empty, OR forwards an
- * already-saved config to its parent. Replaces the need for a `.env` file
- * and lets visitors test-drive the demo without a backend.
+ * Collects a demo credential and forwards it to the app. The value remains
+ * in React state only and is discarded when the document reloads.
  */
 export function Setup({ onConfig }: SetupProps): React.ReactElement {
   const orgUrlId = useId();
@@ -24,15 +20,6 @@ export function Setup({ onConfig }: SetupProps): React.ReactElement {
   const [orgUrl, setOrgUrl] = useState('');
   const [authCredential, setAuthCredential] = useState('');
   const [error, setError] = useState<ValidationError | null>(null);
-  // Lazy initializer — runs once on mount; avoids the
-  // `react-hooks/set-state-in-effect` antipattern.
-  const [storageOk] = useState(() => isStorageAvailable());
-
-  useEffect(() => {
-    const existing = loadConfig();
-    if (existing) onConfig(existing);
-  }, [onConfig]);
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     const validation = validateConfig({ orgUrl, authCredential });
@@ -44,7 +31,6 @@ export function Setup({ onConfig }: SetupProps): React.ReactElement {
       orgUrl: orgUrl.trim(),
       authCredential: authCredential.trim(),
     };
-    if (storageOk) saveConfig(config);
     onConfig(config);
   };
 
@@ -65,12 +51,6 @@ export function Setup({ onConfig }: SetupProps): React.ReactElement {
           </a>
         </p>
       </header>
-
-      {!storageOk ? (
-        <p className="warning" role="status">
-          {messages.STORAGE_UNAVAILABLE}
-        </p>
-      ) : null}
 
       <form onSubmit={handleSubmit} noValidate>
         <div className="field">
@@ -93,7 +73,7 @@ export function Setup({ onConfig }: SetupProps): React.ReactElement {
           <textarea
             id={authId}
             name="authCredential"
-            placeholder="https://yourorg.lightning.force.com/secur/frontdoor.jsp?sid=..."
+            placeholder="Paste a freshly generated frontdoor URL"
             value={authCredential}
             onChange={(e) => setAuthCredential(e.target.value)}
             required
@@ -115,13 +95,12 @@ export function Setup({ onConfig }: SetupProps): React.ReactElement {
         ) : null}
 
         <p className="hint">
-          <strong>Demo only.</strong> Do not paste production credentials. The
-          frontdoor URL grants session access — treat it like a password and
-          use a sandbox org.
+          <strong>Demo only.</strong> Use a sandbox org. This value stays in
+          memory and is discarded when you reload or reset the page.
         </p>
 
         <button type="submit" className="btn btn--primary">
-          Save and connect
+          Connect
         </button>
       </form>
     </main>

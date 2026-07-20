@@ -7,9 +7,10 @@ These are **example apps**, not a supported product. They keep their dependencie
 minimal, but you are responsible for reviewing all third-party packages and their
 transitive dependencies before using any of this code in your own application.
 
-One security note specific to these examples: the Phase 1 auth model has you
-paste a Salesforce **frontdoor URL** into an in-app form, stored only in your
-browser's `localStorage`. A frontdoor URL is a session credential — treat it
-like a password, use a **sandbox org** for demos, and never commit one. See
+One security note specific to these examples: the demo auth model has you
+paste a Salesforce **frontdoor URL** into an in-app form. It is held in
+JavaScript memory only and discarded on reload or reset. A frontdoor URL is a
+session credential — treat it like a password, use a **sandbox org** for demos,
+and never commit, log, or share one. See
 [`docs/how-to-get-frontdoor-url.md`](docs/how-to-get-frontdoor-url.md) for
 details.

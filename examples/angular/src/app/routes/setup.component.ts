@@ -24,10 +24,6 @@ import { messages } from '../messages';
         </p>
       </header>
 
-      @if (!config.storageAvailable()) {
-        <p class="warning" role="status">{{ msg.STORAGE_UNAVAILABLE }}</p>
-      }
-
       <form (submit)="onSubmit($event)" novalidate>
         <div class="field">
           <label for="orgUrl">Org URL (Lightning)</label>
@@ -49,7 +45,7 @@ import { messages } from '../messages';
             id="authCredential"
             name="authCredential"
             rows="4"
-            placeholder="https://yourorg.lightning.force.com/secur/frontdoor.jsp?sid=..."
+            placeholder="Paste a freshly generated frontdoor URL"
             autocomplete="off"
             spellcheck="false"
             [(ngModel)]="authCredential"
@@ -65,12 +61,11 @@ import { messages } from '../messages';
         }
 
         <p class="hint">
-          <strong>Demo only.</strong> Do not paste production credentials. The
-          frontdoor URL grants session access — treat it like a password and
-          use a sandbox org.
+          <strong>Demo only.</strong> Use a sandbox org. This value stays in
+          memory and is discarded when you reload or reset the page.
         </p>
 
-        <button type="submit" class="btn btn--primary">Save and connect</button>
+        <button type="submit" class="btn btn--primary">Connect</button>
       </form>
     </main>
   `,

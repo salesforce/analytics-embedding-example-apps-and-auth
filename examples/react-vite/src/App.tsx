@@ -15,7 +15,7 @@ import { ErrorPanel } from './ErrorPanel';
 import { AppHeader } from './AppHeader';
 import { Showcase } from './routes/Showcase';
 import { initSdkOnce, getAuthRedirect, retryAuth } from './lib/initSdkOnce';
-import { clearConfig, type DemoConfig } from './lib/config';
+import type { DemoConfig } from './lib/config';
 import { messages } from './lib/messages';
 import { log } from './lib/log';
 
@@ -114,7 +114,6 @@ export function App(): React.ReactElement {
   }, []);
 
   const handleReset = useCallback(() => {
-    clearConfig();
     location.assign(location.pathname);
   }, []);
 
@@ -128,6 +127,18 @@ export function App(): React.ReactElement {
       .then((response) => {
         if (response.status === Status.SUCCESS) {
           setState({ kind: 'ready' });
+          return;
+        }
+        const redirect = getAuthRedirect(response);
+        if (redirect) {
+          setState({
+            kind: 'error',
+            title: 'Additional verification needed',
+            detail: messages.AUTH_REDIRECT,
+            continueUrl: redirect.continueUrl,
+            canRetry: true,
+            retryOrgUrl: redirect.orgUrl,
+          });
           return;
         }
         const sdkMessage = response.message || 'Unknown error';

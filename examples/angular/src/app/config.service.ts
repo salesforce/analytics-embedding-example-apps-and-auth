@@ -9,11 +9,6 @@ import {
 import { log } from './log';
 import { messages } from './messages';
 
-export const STORAGE_KEYS = {
-  orgUrl: 'analytics-sdk-demo:orgUrl',
-  authCredential: 'analytics-sdk-demo:authCredential',
-} as const;
-
 // Salesforce serves Lightning from many host shapes (production, sandboxes,
 // scratch orgs, enhanced domains, pre-release instances like `*.pc-rnd.force.com`).
 // Enumerating them all is a losing game, so we only check that the org URL is a
@@ -48,14 +43,11 @@ export type InitState =
 
 @Injectable({ providedIn: 'root' })
 export class ConfigService {
-  /** Current persisted config, or null if missing. */
-  readonly config: WritableSignal<DemoConfig | null> = signal(this.read());
+  /** Current in-memory config, or null before setup. */
+  readonly config: WritableSignal<DemoConfig | null> = signal(null);
 
   /** Init state machine — read by templates. */
   readonly state: WritableSignal<InitState> = signal({ kind: 'idle' });
-
-  /** True when localStorage actually persists. */
-  readonly storageAvailable: WritableSignal<boolean> = signal(this.probe());
 
   private inflight: Promise<BootstrapResponse> | null = null;
   private resolved: BootstrapResponse | null = null;
@@ -71,20 +63,10 @@ export class ConfigService {
       orgUrl: next.orgUrl.trim(),
       authCredential: next.authCredential.trim(),
     };
-    if (this.storageAvailable()) {
-      localStorage.setItem(STORAGE_KEYS.orgUrl, trimmed.orgUrl);
-      localStorage.setItem(STORAGE_KEYS.authCredential, trimmed.authCredential);
-    }
     this.config.set(trimmed);
   }
 
   clear(): void {
-    try {
-      localStorage.removeItem(STORAGE_KEYS.orgUrl);
-      localStorage.removeItem(STORAGE_KEYS.authCredential);
-    } catch {
-      /* ignore */
-    }
     this.config.set(null);
     this.resolved = null;
     this.inflight = null;
@@ -186,27 +168,5 @@ export class ConfigService {
       detail: messages.INIT_FAILED(sdkMessage),
       canRetry: false,
     });
-  }
-
-  private read(): DemoConfig | null {
-    try {
-      const orgUrl = localStorage.getItem(STORAGE_KEYS.orgUrl);
-      const authCredential = localStorage.getItem(STORAGE_KEYS.authCredential);
-      if (!orgUrl || !authCredential) return null;
-      return { orgUrl, authCredential };
-    } catch {
-      return null;
-    }
-  }
-
-  private probe(): boolean {
-    const sentinel = '__analytics-sdk-demo-probe__';
-    try {
-      localStorage.setItem(sentinel, '1');
-      localStorage.removeItem(sentinel);
-      return true;
-    } catch {
-      return false;
-    }
   }
 }

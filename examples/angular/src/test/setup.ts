@@ -10,5 +10,5 @@ vi.mock('@salesforce/analytics-embedding-sdk', () =>
 // The @angular/build:unit-test builder initializes the Angular TestBed before
 // these setup files run, so we only need cross-test cleanup here.
 afterEach(() => {
-  localStorage.clear();
+  vi.clearAllMocks();
 });

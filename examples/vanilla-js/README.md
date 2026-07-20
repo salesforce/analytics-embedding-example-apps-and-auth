@@ -1,9 +1,7 @@
-# Vanilla JS — Analytics Embedding SDK example
+# Vanilla JavaScript — Analytics Embedding SDK example
 
-A no-build example of `@salesforce/analytics-embedding-sdk` using the SDK's
-**HTML custom-element API**. Plain HTML + ES modules, served as static
-files. The SDK loads from a CDN at runtime — there is no `package.json`
-runtime dependency on the SDK at all.
+A no-build Analytics Embedding SDK 2.0 example using HTML custom elements,
+plain HTML, and ES modules. The runtime SDK is loaded from an exact CDN URL.
 
 ## Run locally
 
@@ -12,21 +10,22 @@ npx serve . -l 8500
 # Open http://localhost:8500
 ```
 
-That's it. No `npm install` needed for runtime — only for linting and the
-smoke test (`npm install && npm test`).
+No package installation is required at runtime. Run `npm ci` only when you
+want to lint, typecheck, or test the repository code.
 
-## How routing works
+Before connecting, replace the four asset placeholders in the templates in
+[`index.html`](index.html) and complete the repository's
+[Salesforce prerequisites](../../docs/prerequisites.md).
 
-There is no client-side router. Each page is a separate HTML file:
+## One-document navigation
 
-| URL | File | Purpose |
-|---|---|---|
-| `/` | `index.html` | Setup form (paste org URL + frontdoor URL) |
-| `/showcase.html` | `showcase.html` | Dashboard + Metric + Visualization |
-| `/agent.html` | `agent.html` | AnalyticsAgent |
+Setup, Showcase, and Agent are views in `index.html`. The `#showcase` and
+`#agent` hashes switch views without loading another document. This matters
+because the frontdoor URL is held only in memory and the SDK is initialized
+once per page load.
 
-Each non-setup page calls `redirectIfUnconfigured()` first — if
-`localStorage` is empty it bounces back to `/`.
+After a reload or **Reset config**, the credential is gone and setup is shown
+again.
 
 ## Scripts
 
@@ -34,43 +33,32 @@ Each non-setup page calls `redirectIfUnconfigured()` first — if
 |---|---|
 | `npm run dev` | Static-file server on port 8500 |
 | `npm run lint` | ESLint on `js/` and `test/` |
-| `npm run typecheck` | `tsc --noEmit` with `checkJs: true` (TypeScript checks JSDoc types) |
+| `npm run typecheck` | TypeScript checks JavaScript via JSDoc |
 | `npm test` | Vitest smoke suite |
 
 ## What this example teaches
 
-- How to embed Tableau Next analytics with **zero build tooling** —
-  ES modules + the SDK CDN bundle.
-- How to use the SDK's **HTML custom-element API**:
-  `<analytics-dashboard id-or-api-name="...">` upgrades automatically once
-  the module loads.
-- How to ship a tight Content-Security-Policy meta tag tuned for the SDK +
-  Salesforce origins (see `<head>` of each HTML file).
-- How to keep the same persistence + error-recovery UX as the React /
-  Angular examples, written in 200 lines of vanilla DOM code.
+- loading SDK 2.0 from a pinned CDN module without build tooling;
+- using `<analytics-dashboard>`, `<analytics-metric>`,
+  `<analytics-visualization>`, and `<analytics-agent>`;
+- attaching SDK events before template content enters the live document;
+- initializing once while navigating between views;
+- retaining the demo credential in memory only; and
+- handling success, repeated `AUTH_REDIRECT`, terminal retry failure, and
+  component render errors.
 
 ## Files of interest
 
 | File | Why |
 |---|---|
-| [`index.html`](index.html) | Setup form + CSP baseline |
-| [`showcase.html`](showcase.html) | `<analytics-dashboard>` + `<analytics-metric>` + `<analytics-visualization>` |
-| [`agent.html`](agent.html) | `<analytics-agent>` |
-| [`js/sdk-cdn.js`](js/sdk-cdn.js) | Single source of truth for the CDN URL |
-| [`js/init.js`](js/init.js) | Singleton SDK init guard |
-| [`js/config.js`](js/config.js) | `loadConfig`, `validateConfig`, redirect helper |
-| [`js/error-panel.js`](js/error-panel.js) | Canonical error UI (DOM-built, no innerHTML) |
-| [`js/nav.js`](js/nav.js) | Shared header injector |
-| [`test/smoke.test.js`](test/smoke.test.js) | 6-case smoke suite (jsdom) |
+| [`index.html`](index.html) | Setup, navigation, embed templates, and CSP baseline |
+| [`js/app.js`](js/app.js) | In-memory setup, init/retry state machine, view switching |
+| [`js/sdk-cdn.js`](js/sdk-cdn.js) | Pinned SDK CDN URL |
+| [`js/init.js`](js/init.js) | Singleton SDK initialization and redirect parsing |
+| [`js/config.js`](js/config.js) | Config validation |
+| [`js/error-panel.js`](js/error-panel.js) | Safe DOM-built recovery UI |
+| [`test/smoke.test.js`](test/smoke.test.js) | Validation and auth-recovery tests |
 
-## Notes
-
-- The Vanilla example uses the **HTML custom-element** SDK surface. The
-  React + Angular examples demonstrate the alternative class API
-  (`new AnalyticsDashboard({ container, idOrApiName })`).
-- `<link rel="modulepreload">` on the setup page warms the SDK module so
-  init feels instant after Save.
-- All UI is built with `document.createElement` + `textContent` — no
-  `innerHTML`, no inline event handlers, no `eval`.
+The React and Angular examples demonstrate the alternative SDK class API.
 
 ← [Back to repo root](../../README.md)

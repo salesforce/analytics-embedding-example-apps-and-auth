@@ -6,14 +6,14 @@ standalone components, signals, and the `@if`/`@for` control-flow syntax.
 ## Run locally
 
 ```bash
-npm install
+npm ci
 npm start
 # Open http://localhost:8500
 ```
 
 The first time you open the app you'll be redirected to `/setup`. Paste your
 `https://yourorg.lightning.force.com` URL and a frontdoor URL, then click
-**Save and connect**.
+**Connect**. The credential remains in memory and is discarded on reload.
 
 > Need a frontdoor URL? See [`docs/how-to-get-frontdoor-url.md`](../../docs/how-to-get-frontdoor-url.md) at the repo root.
 
@@ -63,7 +63,7 @@ server-side rewrite rules.
 | [`src/app/app.component.ts`](src/app/app.component.ts) | Top-level shell; reads init state via signals |
 | [`src/app/app.config.ts`](src/app/app.config.ts) | Standalone bootstrap; provider list |
 | [`src/app/app.routes.ts`](src/app/app.routes.ts) | Routes with `loadComponent` + `canActivate` |
-| [`src/app/config.service.ts`](src/app/config.service.ts) | Signals; localStorage; init-once guard |
+| [`src/app/config.service.ts`](src/app/config.service.ts) | Memory-only config signal and init-once guard |
 | [`src/app/config.guard.ts`](src/app/config.guard.ts) | Functional `canActivate` |
 | [`src/app/error-panel.component.ts`](src/app/error-panel.component.ts) | Canonical error UI |
 | [`src/app/routes/setup.component.ts`](src/app/routes/setup.component.ts) | In-app config form |
@@ -77,8 +77,11 @@ server-side rewrite rules.
 - This example uses the SDK's **class API**. The Vanilla example shows the
   alternative HTML custom-element surface.
 - Setup component does **not** show the shell header — the header is gated
-  on `config()` so it appears only after Save.
+  on `config()` so it appears only after Connect.
 - Signals replace the older `BehaviorSubject` + `async` pipe pattern for
   this kind of single-shot reactive state.
+- Replace the asset placeholders in `src/app/routes/showcase.component.ts`
+  and `src/app/routes/agent.component.ts` before connecting. Complete the
+  repository's [Salesforce prerequisites](../../docs/prerequisites.md) first.
 
 ← [Back to repo root](../../README.md)

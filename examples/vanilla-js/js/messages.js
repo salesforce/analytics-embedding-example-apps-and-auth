@@ -12,6 +12,4 @@ export const messages = Object.freeze({
   /** @param {string} idOrApiName */
   RENDER_FAILED: (idOrApiName) =>
     `Couldn't load "${idOrApiName}". Check that the asset exists in your org and that you have permission.`,
-  STORAGE_UNAVAILABLE:
-    "Settings won't persist in this browser. Private browsing or storage restrictions are likely the cause.",
 });

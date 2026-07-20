@@ -1,10 +1,9 @@
 /**
- * Single source of truth for the SDK CDN URL. Pinned to major version 1 to
- * stay forward-compatible with patch + minor releases. Override by editing
- * this constant if your environment proxies to a private mirror.
+ * Single source of truth for the SDK CDN URL. Pinning an exact version keeps
+ * this reference example reproducible. Update it with package.json.
  */
 export const SDK_CDN_URL =
-  'https://cdn.jsdelivr.net/npm/@salesforce/analytics-embedding-sdk@1/dist/sdk-bundle.module.js';
+  'https://cdn.jsdelivr.net/npm/@salesforce/analytics-embedding-sdk@2.0.0/dist/sdk-bundle.module.js';
 
 /**
  * Lazily import the SDK module. Wrapped so tests can mock the import path.

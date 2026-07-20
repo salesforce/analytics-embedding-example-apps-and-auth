@@ -5,13 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Vanilla JS / ES modules example for @salesforce/analytics-embedding-sdk — embed Tableau Next analytics with no build step."
+      content="Vanilla JS example for Analytics Embedding SDK 2.0, using HTML custom elements and an in-memory demo credential."
     />
-    <!--
-      CSP for the Vanilla example. The SDK loads from jsdelivr; embedded
-      analytics call back to your Salesforce org and Tableau Next service
-      origins. Tighten this for production deployments.
-    -->
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self';
@@ -22,16 +17,17 @@
                frame-src https://*.force.com https://*.salesforce.com https://*.tableau.com;
                base-uri 'self';"
     />
-    <title>Configure — Analytics Embedding SDK (Vanilla example)</title>
+    <title>Analytics Embedding SDK (Vanilla example)</title>
     <link rel="stylesheet" href="./styles.css" />
-    <!--
-      The SDK isn't loaded on this setup page — preload directives live on
-      showcase.html and agent.html where the import actually fires.
-    -->
+    <link
+      rel="modulepreload"
+      href="https://cdn.jsdelivr.net/npm/@salesforce/analytics-embedding-sdk@2.0.0/dist/sdk-bundle.module.js"
+    />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
-    <main id="main" class="setup">
+    <a id="skip-link" class="skip-link" href="#setup-main">Skip to content</a>
+
+    <main id="setup-main" class="setup">
       <header>
         <h1>Configure the demo</h1>
         <p>
@@ -45,8 +41,6 @@
           >
         </p>
       </header>
-
-      <p id="storage-warning" class="warning" role="status" hidden></p>
 
       <form id="config-form" novalidate>
         <div class="field">
@@ -68,7 +62,7 @@
             id="authCredential"
             name="authCredential"
             rows="4"
-            placeholder="https://yourorg.lightning.force.com/secur/frontdoor.jsp?sid=..."
+            placeholder="Paste a freshly generated frontdoor URL"
             autocomplete="off"
             spellcheck="false"
             required
@@ -76,16 +70,90 @@
         </div>
 
         <p id="form-error" class="error" role="alert" hidden></p>
-
         <p class="hint">
-          <strong>Demo only.</strong> Do not paste production credentials. The
-          frontdoor URL grants session access — treat it like a password and
-          use a sandbox org.
+          <strong>Demo only.</strong> Use a sandbox org. This value stays in
+          memory and is discarded when you reload or reset the page.
         </p>
-
-        <button type="submit" class="btn btn--primary">Save and connect</button>
+        <button type="submit" class="btn btn--primary">Connect</button>
       </form>
     </main>
-    <script type="module" src="./js/setup-page.js"></script>
+
+    <div id="app-shell" hidden>
+      <header class="app-header">
+        <div class="app-header__brand">
+          <strong>Analytics Embedding SDK</strong>
+          <span class="app-header__tag">Vanilla JS · SDK 2.0</span>
+        </div>
+        <nav aria-label="Example views">
+          <a id="showcase-link" href="#showcase">Showcase</a>
+          <a id="agent-link" href="#agent">Agent</a>
+        </nav>
+        <button id="reset-button" type="button" class="btn btn--ghost">
+          Reset config
+        </button>
+      </header>
+
+      <main id="app-main" class="app">
+        <p id="status" class="loading" role="status"></p>
+        <div id="error-host"></div>
+        <div id="route-host" hidden></div>
+      </main>
+    </div>
+
+    <template id="showcase-template">
+      <section aria-labelledby="showcase-title">
+        <header class="page-header">
+          <h1 id="showcase-title">Showcase</h1>
+          <p>
+            A dashboard, a metric, and a visualization rendered using the
+            SDK's <strong>HTML custom-element API</strong>.
+          </p>
+        </header>
+        <div class="showcase__grid">
+          <!-- Replace these values with API names from your own org. -->
+          <analytics-dashboard
+            id-or-api-name="YourDashboardApiName"
+            role="region"
+            aria-label="Sales dashboard"
+            aria-busy="true"
+            class="embed embed--dashboard"
+          ></analytics-dashboard>
+          <analytics-metric
+            id-or-api-name="YourMetricApiName"
+            role="region"
+            aria-label="Headline metric"
+            aria-busy="true"
+            class="embed embed--metric"
+          ></analytics-metric>
+          <analytics-visualization
+            id-or-api-name="YourVisualizationApiName"
+            role="region"
+            aria-label="Single visualization"
+            aria-busy="true"
+            class="embed embed--viz"
+          ></analytics-visualization>
+        </div>
+      </section>
+    </template>
+
+    <template id="agent-template">
+      <section aria-labelledby="agent-title">
+        <header class="page-header">
+          <h1 id="agent-title">AnalyticsAgent</h1>
+          <p>An Agentforce analytics agent embedded with a custom element.</p>
+        </header>
+        <analytics-agent
+          id-or-api-name="YourAnalyticsAgentApiName"
+          show-header="true"
+          show-header-actions="true"
+          role="region"
+          aria-label="Analytics agent"
+          aria-busy="true"
+          class="embed embed--agent"
+        ></analytics-agent>
+      </section>
+    </template>
+
+    <script type="module" src="./js/app.js"></script>
   </body>
 </html>

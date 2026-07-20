@@ -1,182 +1,143 @@
 # Salesforce Analytics Embedding SDK — Example Apps
 
-[License: Apache 2.0](LICENSE.txt)
-[SDK: @salesforce/analytics-embedding-sdk](https://www.npmjs.com/package/@salesforce/analytics-embedding-sdk)
+[License: Apache 2.0](LICENSE.txt) ·
+[SDK package](https://www.npmjs.com/package/@salesforce/analytics-embedding-sdk) ·
+[Official SDK documentation](https://developer.salesforce.com/docs/analytics/sdk/guide/sdk-overview.html)
 
-Canonical, framework-spanning example apps for embedding **Tableau Next**
-analytics — Dashboards, Metrics, Visualizations, and the AnalyticsAgent —
-into your own web application using
-[`@salesforce/analytics-embedding-sdk`](https://www.npmjs.com/package/@salesforce/analytics-embedding-sdk).
+Reference frontend apps for embedding Tableau Next dashboards, metrics,
+visualizations, and AnalyticsAgent with **Analytics Embedding SDK 2.0**.
+The same scenarios are implemented in React, Vanilla JavaScript, and Angular.
 
-Each example is a standalone, runnable project that covers the same scenarios
-in idiomatic React 19, plain Vanilla JS, and Angular 22. Fork the directory
-that matches your stack, swap in your org's IDs, and ship.
-
-## What this repo is
-
-- A **single source of truth** for embedding Tableau Next analytics across
-major frontend stacks. Three examples — same scenarios, same UX, different
-frameworks.
-- A **reference implementation** of the recoverable error UX, lifecycle
-cleanup, and accessibility patterns that production embeds need.
-
-This repo is *phase 1* and ships UI-only example apps. Backend samples for
-OAuth → frontdoor exchange land in *phase 2* under `auth-backend/`.
+This repository's current scope is frontend integration. A production
+authentication service is intentionally out of scope for this phase.
 
 ## Examples
 
+| Stack | Source | API style |
+|---|---|---|
+| React 19 + Vite 8 + TypeScript | [examples/react-vite/](examples/react-vite/) | SDK classes, hooks, lazy route |
+| Vanilla JavaScript | [examples/vanilla-js/](examples/vanilla-js/) | CDN module, HTML custom elements, no build step |
+| Angular 22 | [examples/angular/](examples/angular/) | SDK classes, signals, dependency injection |
 
-| Stack                      | Source                                       | What it spotlights                                                |
-| -------------------------- | -------------------------------------------- | ----------------------------------------------------------------- |
-| **React 19 + Vite 8 + TS** | [examples/react-vite/](examples/react-vite/) | Modern SPA — class API, lazy routes, hooks                        |
-| **Vanilla JS (no build)**  | [examples/vanilla-js/](examples/vanilla-js/) | Static page / CMS embed — HTML custom-element API, CDN-loaded SDK |
-| **Angular 22**             | [examples/angular/](examples/angular/)       | Enterprise app — standalone components, signals, DI               |
+Every example includes:
 
+- a Showcase view with a dashboard, metric, and visualization;
+- an AnalyticsAgent view;
+- one-time SDK initialization;
+- `AUTH_REDIRECT` recovery with `retryOrAddOrgs`;
+- runtime error handling and component cleanup; and
+- an in-app demo form that keeps the credential **in memory only**.
 
-Each example demonstrates the same four scenarios: a **Showcase** page with a
-Dashboard + Metric + Visualization on one screen, an **Agent** route with the
-AnalyticsAgent, an **in-app config form** that persists `orgUrl` +
-`authCredential` to `localStorage`, and a **recoverable error UX** for expired
-sessions and MFA prompts.
+Reloading or resetting an example discards the credential and requires a
+fresh frontdoor URL.
+
+## Before you start
+
+Complete the [Salesforce prerequisites](docs/prerequisites.md) first. In
+particular, you need:
+
+- an appropriately licensed Salesforce org with Tableau Next enabled;
+- access to each embedded analytics asset;
+- the example origin in the org's CORS allowlist and embedding/trusted-domain
+  settings;
+- a supported browser configured to allow the cookies required by the embed;
+- API names for a dashboard, metric, visualization, and AnalyticsAgent; and
+- a freshly generated frontdoor URL from an approved OAuth/UI Bridge flow.
+
+Use a sandbox and a least-privileged user for these examples. Node.js
+22.12 or newer is recommended for the repository's current tooling.
 
 ## Quickstart
 
-> **All three quickstarts have the same shape.** Pick the one matching your
-> stack — the other two read identically.
+First replace the placeholder asset names for your org:
 
-### React 19 + Vite
+- React: `src/routes/Showcase.tsx` and `src/routes/Agent.tsx`
+- Vanilla: the templates in `index.html`
+- Angular: `src/app/routes/showcase.component.ts` and
+  `src/app/routes/agent.component.ts`
+
+Then run one example.
+
+### React
 
 ```bash
-git clone https://github.com/salesforce/analytics-embedding-example-apps-and-auth.git
-cd analytics-embedding-example-apps-and-auth/examples/react-vite
-npm install
+cd examples/react-vite
+npm ci
 npm run dev
-# Open http://localhost:8500 — paste your org URL + frontdoor URL into the form.
 ```
 
-The first time you open the app you'll see a config form. Paste your
-`https://yourorg.lightning.force.com` URL and a frontdoor URL (see the auth
-section below), click **Save**, and the Showcase route renders.
+Open `http://localhost:8500`.
 
-### Vanilla JS
+### Vanilla JavaScript
 
 ```bash
-git clone https://github.com/salesforce/analytics-embedding-example-apps-and-auth.git
-cd analytics-embedding-example-apps-and-auth/examples/vanilla-js
-npx serve .
-# Open the printed URL — no build step needed.
+cd examples/vanilla-js
+npx serve . -l 8500
 ```
 
-The Vanilla example loads the SDK directly from a CDN. There is no
-`package.json` runtime dependency on the SDK at all — the only npm scripts
-exist for linting and the smoke test.
+Open `http://localhost:8500`. The SDK loads directly from the pinned CDN URL
+in `js/sdk-cdn.js`; installing packages is only necessary for repository
+linting, typechecking, and tests.
 
-### Angular 22
+### Angular
 
 ```bash
-git clone https://github.com/salesforce/analytics-embedding-example-apps-and-auth.git
-cd analytics-embedding-example-apps-and-auth/examples/angular
-npm install
+cd examples/angular
+npm ci
 npm start
-# Open http://localhost:8500 — paste your org URL + frontdoor URL.
 ```
 
-The Angular example uses standalone components and the `@if`/`@for`
-control-flow syntax. The `configGuard` keeps the Showcase and Agent routes
-gated until config is present.
+Open `http://localhost:8500`.
 
-## How does authentication work?
+## Authentication model
 
-In phase 1 the example apps accept a Salesforce **frontdoor URL** as
-`authCredential`. A frontdoor URL is a short-lived redirect that establishes
-a Salesforce session in a browser. You obtain one out of band (manually for
-demos, or via your own backend in production) and paste it into the in-app
-config form. The example stores it in `localStorage` only on your machine.
+The SDK accepts a frontdoor URL as `authCredential`. For these local examples,
+paste a fresh URL into the setup form. It is passed directly to
+`initializeAnalyticsSdk`, never written to web storage, and removed from the
+visible form immediately. See [the demo authentication guide](docs/how-to-get-frontdoor-url.md).
 
-A frontdoor URL grants whatever access the underlying session has — treat it
-like a password and use a **sandbox org** for demos. For step-by-step
-instructions on getting one, see
-[docs/how-to-get-frontdoor-url.md](docs/how-to-get-frontdoor-url.md).
+For a real application, use a backend OAuth 2.0 Web Server Flow and generate
+the browser credential through Salesforce UI Bridge. Do not ask users to copy
+session cookies and do not place refresh tokens or client secrets in frontend
+code.
 
-In phase 2 we will add backend samples under `auth-backend/` that mint
-frontdoor URLs server-side from OAuth refresh tokens, so production apps
-never expose a long-lived credential to the browser.
+## SDK lifecycle shown here
 
-## FAQ
+1. Collect `orgUrl` and a fresh `authCredential`.
+2. Call `initializeAnalyticsSdk` once for the document.
+3. Render assets only after `Status.SUCCESS`.
+4. If an org reports `OrgStates.AUTH_REDIRECT`, open the returned verification
+   URL and inspect the result of `retryOrAddOrgs`.
+5. Subscribe to `EventName.ERROR` and remove SDK elements during framework
+   cleanup.
 
-### How do I embed a Tableau Next dashboard in React?
-
-The shortest path is to fork [examples/react-vite/](examples/react-vite/).
-The `Showcase.tsx` route shows the canonical pattern: import
-`AnalyticsDashboard` from the SDK, mount it inside a `ref`'d `<div>` in a
-`useEffect`, and call `.remove()` in the cleanup (each SDK instance is itself
-an `HTMLElement`, so detaching it from the DOM is the cleanup). See
-[examples/react-vite/src/routes/Showcase.tsx](examples/react-vite/src/routes/Showcase.tsx).
-
-### How do I authenticate without a backend?
-
-For demos, paste a frontdoor URL obtained from a sandbox org — the Phase 1
-auth model. See [docs/how-to-get-frontdoor-url.md](docs/how-to-get-frontdoor-url.md).
-For production, you need a backend that mints frontdoor URLs from OAuth
-tokens (Phase 2 of this repo).
-
-### What is a frontdoor URL?
-
-A short-lived, single-use redirect that establishes a Salesforce session in a
-browser without going through the standard login flow. Inherits the lifetime
-of the underlying session (typically 2 hours). Treat it like a password.
-
-### How do I embed the Agentforce analytics agent?
-
-Each example has a separate `/agent` route (Vanilla: `agent.html`) that
-mounts `AnalyticsAgent`. The route is lazy-loaded in React (`React.lazy`)
-and Angular (`loadComponent`) to keep the initial bundle small.
-
-### Does this work with Next.js / Remix / Vue / Svelte?
-
-Yes — the SDK is framework-agnostic. The React example's pattern (mount in
-an effect, remove on unmount) ports to any view layer. The Vanilla example
-shows the lowest-friction surface (HTML custom element) which embeds in any
-HTML host without a framework at all.
-
-### Is this production-ready?
-
-The UI patterns are. The auth model is **not** — frontdoor URLs are a demo
-shortcut. Production apps need a backend that mints them server-side, which
-we ship in phase 2.
-
-### Where do I report issues?
-
-[GitHub Issues](https://github.com/salesforce/analytics-embedding-example-apps-and-auth/issues)
+The examples deliberately validate only that `orgUrl` is an HTTPS URL. Valid
+Salesforce org hostnames vary, and the SDK/org response is the authority on
+whether initialization is allowed.
 
 ## Project layout
 
-```
+```text
 analytics-embedding-example-apps-and-auth/
-├── README.md                       # This file (SSOT)
-├── llms.txt                        # AI-scanner manifest
-├── examples/
-│   ├── react-vite/                 # React 19 + Vite 8 + TS
-│   ├── vanilla-js/                 # Plain HTML + ES modules
-│   └── angular/                    # Angular 22 standalone
 ├── docs/
+│   ├── prerequisites.md
 │   └── how-to-get-frontdoor-url.md
-└── .github/workflows/              # CI matrix
+├── examples/
+│   ├── react-vite/
+│   ├── vanilla-js/
+│   └── angular/
+└── .github/workflows/
 ```
 
-The `auth-backend/` directory is reserved for phase 2 and intentionally not
-present yet.
+## Support and security
 
-## Contributing
+These are reference examples, not a supported product. Report defects through
+[GitHub Issues](https://github.com/salesforce/analytics-embedding-example-apps-and-auth/issues).
+For security reports, follow [SECURITY.md](SECURITY.md) and do not open a
+public issue.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution workflow and
-[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community expectations.
+## Contributing and license
 
-## Security
-
-To report a security issue, see [SECURITY.md](SECURITY.md). Please do not
-file security issues as public GitHub issues.
-
-## License
-
-Apache 2.0 — see [LICENSE.txt](LICENSE.txt).
+See [CONTRIBUTING.md](CONTRIBUTING.md) and
+[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Licensed under Apache 2.0; see
+[LICENSE.txt](LICENSE.txt).

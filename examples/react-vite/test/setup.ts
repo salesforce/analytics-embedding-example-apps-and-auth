@@ -4,7 +4,6 @@ import { cleanup } from '@testing-library/react';
 
 afterEach(() => {
   cleanup();
-  localStorage.clear();
 });
 
 // Mock the Analytics Embedding SDK at module boundary. Tests should never

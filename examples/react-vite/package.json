@@ -14,7 +14,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@salesforce/analytics-embedding-sdk": "^1.1.0",
+    "@salesforce/analytics-embedding-sdk": "^2.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.18.0"

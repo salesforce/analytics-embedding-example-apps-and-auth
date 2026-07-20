@@ -11,6 +11,4 @@ export const messages = {
     `Couldn't initialize the SDK. ${sdkMessage}`,
   RENDER_FAILED: (idOrApiName: string): string =>
     `Couldn't load "${idOrApiName}". Check that the asset exists in your org and that you have permission.`,
-  STORAGE_UNAVAILABLE:
-    "Settings won't persist in this browser. Private browsing or storage restrictions are likely the cause.",
 } as const;
