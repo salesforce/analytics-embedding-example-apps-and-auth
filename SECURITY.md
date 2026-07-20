@@ -1,7 +1,19 @@
 ## Security
 
 Please report any security issue to [security@salesforce.com](mailto:security@salesforce.com)
-as soon as it is discovered. This library limits its runtime dependencies in
-order to reduce the total cost of ownership as much as can be, but all consumers
-should remain vigilant and have their security stakeholders review all third-party
-products (3PP) like this one and their dependencies.
+as soon as it is discovered. Do not file security issues as public GitHub issues.
+
+These are **example apps**, not a supported product. They keep their dependencies
+minimal, but you are responsible for reviewing all third-party packages and their
+transitive dependencies before using any of this code in your own application.
+
+One security note specific to these examples: the demo auth model has you
+paste a Salesforce **frontdoor URL** into an in-app form. It is held in
+JavaScript memory only and discarded on reload or reset. A frontdoor URL is a
+session credential — treat it like a password, use a **sandbox org** for demos,
+and never commit, log, or share one. See
+[`docs/how-to-get-frontdoor-url.md`](docs/how-to-get-frontdoor-url.md) for
+details. The local generator under `tools/frontdoor-url/` keeps OAuth material
+in process memory, reads an optional consumer secret from the environment, and
+binds its callback server to loopback only. It is a development tool, not a
+production authentication service.

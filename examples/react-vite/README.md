@@ -1,0 +1,73 @@
+# React 19 + Vite — Analytics Embedding SDK example
+
+A runnable example of `@salesforce/analytics-embedding-sdk` in a modern
+React 19 + Vite 8 + TypeScript project.
+
+## Run locally
+
+```bash
+npm ci
+npm run dev
+# Open http://localhost:8500
+```
+
+The first time you open the app you'll see a config form. Enter your org URL,
+at least one asset ID or API name, and a fresh frontdoor URL, then click
+**Connect**. The configuration remains in memory and is discarded on reload.
+
+> Need a frontdoor URL? See [`docs/how-to-get-frontdoor-url.md`](../../docs/how-to-get-frontdoor-url.md) at the repo root.
+
+## Build for production
+
+```bash
+npm run build      # outputs dist/
+npm run preview    # serves the production build locally
+```
+
+## Scripts
+
+| Script | Purpose |
+|---|---|
+| `npm run dev` | Vite dev server with HMR |
+| `npm run build` | `tsc --noEmit && vite build` — typecheck then bundle |
+| `npm run preview` | Serve the production bundle locally |
+| `npm run lint` | ESLint on `src/` and `test/` |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm test` | Vitest setup and validation smoke tests |
+
+## What this example teaches
+
+- How to gate an SDK-using app behind an in-app config form (no `.env`
+  required for demos).
+- How to integrate the SDK's **class API** (`new AnalyticsDashboard(...)`)
+  with React 19's lifecycle — mount in `useEffect`, `.remove()` on cleanup.
+- How to handle the three init outcomes: `Status.SUCCESS`,
+  `Status.FAILURE`, and `OrgStates.AUTH_REDIRECT` (MFA path).
+- How to lazy-load the AnalyticsAgent route with `React.lazy` + `Suspense`.
+
+## Files of interest
+
+| File | Why |
+|---|---|
+| [`src/App.tsx`](src/App.tsx) | Router + Setup orchestration; init-state machine |
+| [`src/Setup.tsx`](src/Setup.tsx) | In-app setup form and memory-only credential handoff |
+| [`src/ErrorPanel.tsx`](src/ErrorPanel.tsx) | Canonical error UI (Reset / Retry / Continue) |
+| [`src/routes/Showcase.tsx`](src/routes/Showcase.tsx) | Dashboard + Metric + Visualization |
+| [`src/routes/Agent.tsx`](src/routes/Agent.tsx) | AnalyticsAgent (lazy-loaded) |
+| [`src/lib/config.ts`](src/lib/config.ts) | Config types and validation |
+| [`src/lib/initSdkOnce.ts`](src/lib/initSdkOnce.ts) | Singleton init guard for `initializeAnalyticsSdk` |
+| [`src/lib/messages.ts`](src/lib/messages.ts) | Canonical error copy |
+| [`test/smoke.test.tsx`](test/smoke.test.tsx) | Setup and validation smoke tests |
+
+## Notes
+
+- This example uses the **class API** (`new AnalyticsDashboard(...)`).
+  The Vanilla example demonstrates the alternative HTML custom-element
+  surface (`<analytics-dashboard>`).
+- React 19 specific idioms in use: `useId()` for form IDs, native
+  `<title>` in components (no `react-helmet`), and `ref` as a normal prop.
+- Enter at least one asset ID or API name in the setup form before connecting.
+  Complete the repository's
+  [Salesforce prerequisites](../../docs/prerequisites.md) first.
+
+← [Back to repo root](../../README.md)

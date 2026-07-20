@@ -1,0 +1,39 @@
+# Salesforce Analytics Embedding SDK — Example Apps
+
+> Frontend reference apps for @salesforce/analytics-embedding-sdk 2.0 in
+> React 19, Vanilla JavaScript, and Angular 22.
+
+## Documentation
+- Official SDK overview: https://developer.salesforce.com/docs/analytics/sdk/guide/sdk-overview.html
+- Salesforce prerequisites: `docs/prerequisites.md`
+- Demo authentication: `docs/how-to-get-frontdoor-url.md`
+
+## Examples
+- `examples/react-vite/` — class API, hooks, browser routing, lazy Agent route
+- `examples/vanilla-js/` — one HTML document, CDN module, custom-element API, hash views
+- `examples/angular/` — class API, standalone components, signals, lazy routing
+- `tools/frontdoor-url/` — local Node OAuth Web Server Flow + PKCE + UI Bridge utility
+
+## Authentication
+- The local utility can generate a fresh frontdoor URL for configured sandbox/test orgs.
+- The setup forms accept that URL for local demos.
+- Credentials stay in JavaScript memory only; reload/reset discards them.
+- The repository never instructs users to copy a browser session cookie.
+- Production integrations use a trusted backend, OAuth 2.0 Web Server Flow, and Salesforce UI Bridge.
+
+## SDK surface demonstrated
+- `initializeAnalyticsSdk`
+- `Status.SUCCESS` and failure handling
+- `OrgStates.AUTH_REDIRECT`
+- `retryOrAddOrgs`, including inspection of its response
+- `AnalyticsDashboard`, `AnalyticsMetric`, `AnalyticsVisualization`, `AnalyticsAgent`
+- `EventName.ERROR` and `EventName.COMPONENT_LOADED`
+- lifecycle cleanup for SDK-backed elements
+
+## Consistency
+- `orgUrl` validation checks HTTPS syntax; the SDK/org validates the actual host.
+- The setup form accepts IDs or API names for dashboards, metrics, visualizations, and Analytics Agents; at least one is required.
+- Error concepts are consistent across all three examples.
+
+## License
+Apache 2.0 — see LICENSE.txt
