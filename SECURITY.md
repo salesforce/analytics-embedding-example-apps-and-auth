@@ -13,4 +13,7 @@ JavaScript memory only and discarded on reload or reset. A frontdoor URL is a
 session credential — treat it like a password, use a **sandbox org** for demos,
 and never commit, log, or share one. See
 [`docs/how-to-get-frontdoor-url.md`](docs/how-to-get-frontdoor-url.md) for
-details.
+details. The local generator under `tools/frontdoor-url/` keeps OAuth material
+in process memory, reads an optional consumer secret from the environment, and
+binds its callback server to loopback only. It is a development tool, not a
+production authentication service.

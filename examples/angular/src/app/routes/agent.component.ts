@@ -52,6 +52,8 @@ export class AgentComponent implements AfterViewInit, OnDestroy {
     this.agent = new AnalyticsAgent({
       idOrApiName: AGENT_ID,
       parentIdOrElement: host,
+      width: '100%',
+      height: '100%',
       showHeader: true,
       showHeaderActions: true,
     });

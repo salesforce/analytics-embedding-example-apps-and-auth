@@ -12,9 +12,11 @@
 - `examples/react-vite/` — class API, hooks, hash routing, lazy Agent route
 - `examples/vanilla-js/` — one HTML document, CDN module, custom-element API, hash views
 - `examples/angular/` — class API, standalone components, signals, lazy routing
+- `tools/frontdoor-url/` — local Node OAuth Web Server Flow + PKCE + UI Bridge utility
 
 ## Authentication
-- The setup forms accept a freshly generated frontdoor URL for local sandbox demos.
+- The local utility can generate a fresh frontdoor URL for configured sandbox/test orgs.
+- The setup forms accept that URL for local demos.
 - Credentials stay in JavaScript memory only; reload/reset discards them.
 - The repository never instructs users to copy a browser session cookie.
 - Production integrations use a trusted backend, OAuth 2.0 Web Server Flow, and Salesforce UI Bridge.

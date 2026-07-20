@@ -97,4 +97,8 @@ a:hover { color: var(--c-accent-hover); }
 .embed--dashboard { grid-area: dash; min-height: 480px; }
 .embed--metric { grid-area: metric; }
 .embed--viz { grid-area: viz; }
-.embed--agent { min-height: 480px; }
+.embed--agent {
+  width: 100%;
+  height: clamp(30rem, 68vh, 45rem);
+  overflow: hidden;
+}

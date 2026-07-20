@@ -52,7 +52,8 @@ Prepare:
 
 - the Lightning org URL used as `orgUrl`; and
 - a fresh frontdoor URL generated through an approved OAuth/UI Bridge flow,
-  used as `authCredential`.
+  used as `authCredential`. For sandbox testing, you can configure and run the
+  repository's [local frontdoor URL utility](../tools/frontdoor-url/README.md).
 
 The local forms retain the credential only in JavaScript memory. Generate the
 URL immediately before connecting, do not log or commit it, and expect to

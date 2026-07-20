@@ -1,0 +1,15 @@
+{
+  "name": "@analytics-embedding-examples/frontdoor-url",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "license": "Apache-2.0",
+  "description": "Local OAuth and UI Bridge utility for Analytics Embedding SDK testing.",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "start": "node src/cli.mjs",
+    "test": "node --test"
+  }
+}

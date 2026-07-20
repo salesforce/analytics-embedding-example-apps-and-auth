@@ -1,8 +1,9 @@
 # Provide a frontdoor URL for the local demo
 
 The example forms accept a Salesforce frontdoor URL as `authCredential`. This
-is a sensitive, short-lived browser credential. The repository does not
-generate one and does not ask you to extract a Salesforce session cookie.
+is a sensitive, short-lived browser credential. The repository includes a
+localhost OAuth/UI Bridge utility for test orgs and does not ask you to extract
+a Salesforce session cookie.
 
 ## Recommended flow
 
@@ -14,7 +15,7 @@ For a real integration:
 2. Keep the client secret, refresh token, and token exchange on that backend.
 3. Use Salesforce UI Bridge to issue the single-access frontdoor URL for the
    browser. Review the
-   [UI Bridge single-access documentation](https://help.salesforce.com/s/articleView?id=sf.frontdoor_singleaccess.htm&language=en_US&type=5)
+   [UI Bridge single-access documentation](https://help.salesforce.com/s/articleView?id=xcloud.frontdoor_singleaccess.htm&language=en_US&type=5)
    for its current lifetime and consumption rules.
 4. Deliver the fresh URL to your authenticated frontend over HTTPS and pass it
    directly to `initializeAnalyticsSdk`.
@@ -24,15 +25,21 @@ service or internal tool that produces frontdoor URLs.
 
 ## Using these examples locally
 
-For local sandbox testing, obtain a fresh URL from your approved OAuth/UI
-Bridge implementation or trusted development tool, then:
+For local sandbox testing, use your approved OAuth/UI Bridge implementation or
+configure the repository's [frontdoor URL utility](../tools/frontdoor-url/README.md).
+The included tool uses OAuth Web Server Flow with PKCE and calls
+`/services/oauth2/singleaccess` server-side.
+
+After generating a fresh URL:
 
 1. Open an example at `http://localhost:8500`.
 2. Enter the Lightning org URL in **Org URL**.
 3. Paste the newly issued URL into **Frontdoor URL**.
 4. Select **Connect** immediately.
 
-The value is held in JavaScript memory only. It is not stored in
+The utility displays the value in a no-store localhost page and doesn't print
+it to the terminal. After you paste it, the example holds the value in
+JavaScript memory only. It is not stored in
 `localStorage`, `sessionStorage`, cookies, or a source file. The Vanilla
 example uses a single HTML document so changing between Showcase and Agent
 does not require the one-time URL again. A reload or **Reset config** discards

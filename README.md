@@ -8,8 +8,9 @@ Reference frontend apps for embedding Tableau Next dashboards, metrics,
 visualizations, and AnalyticsAgent with **Analytics Embedding SDK 2.0**.
 The same scenarios are implemented in React, Vanilla JavaScript, and Angular.
 
-This repository's current scope is frontend integration. A production
-authentication service is intentionally out of scope for this phase.
+This repository's current scope is frontend integration plus a local
+development utility for generating test credentials. A production
+authentication service is intentionally out of scope.
 
 ## Examples
 
@@ -42,7 +43,8 @@ particular, you need:
   settings;
 - a supported browser configured to allow the cookies required by the embed;
 - API names for a dashboard, metric, visualization, and AnalyticsAgent; and
-- a freshly generated frontdoor URL from an approved OAuth/UI Bridge flow.
+- a freshly generated frontdoor URL from an approved OAuth/UI Bridge flow
+  (the included local utility can perform this flow for test orgs).
 
 Use a sandbox and a least-privileged user for these examples. Node.js
 22.12 or newer is recommended for the repository's current tooling.
@@ -101,6 +103,23 @@ the browser credential through Salesforce UI Bridge. Do not ask users to copy
 session cookies and do not place refresh tokens or client secrets in frontend
 code.
 
+### Generate a URL for local testing
+
+The zero-dependency [frontdoor URL utility](tools/frontdoor-url/) runs the
+OAuth Web Server Flow with PKCE and calls UI Bridge from a localhost process:
+
+```bash
+cd tools/frontdoor-url
+export SF_CLIENT_ID='your-external-client-app-consumer-key'
+export SF_LOGIN_URL='https://your-domain.my.salesforce.com'
+npm start
+```
+
+Your External Client App must allow `http://localhost:1717/callback` and the
+`web` scope. The utility displays the one-time URL in the callback page; it
+does not print or persist the access token or frontdoor URL. See the
+[utility setup guide](tools/frontdoor-url/README.md) before running it.
+
 ## SDK lifecycle shown here
 
 1. Collect `orgUrl` and a fresh `authCredential`.
@@ -126,6 +145,8 @@ analytics-embedding-example-apps-and-auth/
 │   ├── react-vite/
 │   ├── vanilla-js/
 │   └── angular/
+├── tools/
+│   └── frontdoor-url/              # Local OAuth + UI Bridge helper
 └── .github/workflows/
 ```
 

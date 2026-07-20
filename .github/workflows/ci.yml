@@ -55,3 +55,21 @@ jobs:
       - name: Build
         if: ${{ matrix.build }}
         run: npm run build
+
+  frontdoor-utility:
+    name: frontdoor-url utility
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/frontdoor-url
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node 22 LTS
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Test
+        run: npm test
