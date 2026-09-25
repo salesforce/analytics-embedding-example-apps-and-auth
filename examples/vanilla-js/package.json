@@ -15,9 +15,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.0",
-    "@salesforce/analytics-embedding-sdk": "^2.0.0",
-    "eslint": "^10.5.0",
-    "globals": "^17.0.0",
+    "@salesforce/analytics-embedding-sdk": "^2.1.0",
+    "eslint": "^10.11.0",
+    "globals": "^17.12.0",
     "jsdom": "^29.0.0",
     "typescript": "^6.0.0",
     "vitest": "^4.1.9"
